@@ -37,6 +37,16 @@ jobs:
             "build-tools;35.0.0" \
             "ndk;26.1.10909125"
 
+      - name: Restore signing key
+        env:
+          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+        run: |
+          test -n "$RELEASE_KEYSTORE_BASE64"
+          mkdir -p TMessagesProj/config
+          printf '%s' "$RELEASE_KEYSTORE_BASE64" |
+            base64 --decode > TMessagesProj/config/release.keystore
+          test -s TMessagesProj/config/release.keystore
+
       - name: Build APK
         run: |
           chmod +x gradlew
